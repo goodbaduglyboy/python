@@ -1,0 +1,45 @@
+import hashlib
+import os
+import timeit
+
+def comp():
+	BLOCKSIZE = 65536
+
+	srcFileList = []
+	srcFileHash = []
+	tgtFileHash = []
+	srcfilepath = r'C:\Users\605626\Desktop\src'
+	tgtfilepath = r'C:\Users\605626\Desktop\tgt'
+	# srcfilepath = raw_input('Enter source file path')
+	# tgtfilepath = raw_input('Enter target file path')
+	os.chdir(srcfilepath)
+	for root,dirs,files in os.walk(srcfilepath):
+		for file in files:
+			if file.endswith('.xml'):
+				srcFileList.append(file)
+				hasher = hashlib.md5()
+				print file
+				with open(file, 'rb') as afile:
+				    buf = afile.read(BLOCKSIZE)
+				    while len(buf) > 0:
+				        hasher.update(buf)
+				        buf = afile.read(BLOCKSIZE)
+				srchash = hasher.hexdigest()
+				srcFileHash.append(srchash)
+
+	os.chdir(tgtfilepath)
+	for i,file in enumerate(srcFileList):
+		if os.path.isfile(file):
+			print 'Found file in tgt'+file
+			hasher = hashlib.md5()
+			with open(file, 'rb') as afile:
+			    buf = afile.read(BLOCKSIZE)
+			    while len(buf) > 0:
+			        hasher.update(buf)
+			        buf = afile.read(BLOCKSIZE)
+			tgthash = hasher.hexdigest()
+			tgtFileHash.append(tgthash)
+	print srcFileList
+	print srcFileHash
+	print tgtFileHash
+print timeit.timeit(comp,number = 1)
